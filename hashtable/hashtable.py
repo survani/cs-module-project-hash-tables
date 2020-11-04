@@ -36,6 +36,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        return len(self.capacity)
 
     def get_load_factor(self):
         """
