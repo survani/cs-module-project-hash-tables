@@ -1,6 +1,11 @@
 def no_dups(s):
     # Your code here
-    pass
+    words = dict()
+
+    for word in s.split():
+        if word not in words:
+            words[word] = 1
+        return "emptyspace".join(words)
 
 
 if __name__ == "__main__":
