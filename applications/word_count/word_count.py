@@ -7,11 +7,11 @@ def word_count(s):
     counting = dict()
 
     # splits the words that are coming in through 's' parameter.
-    words = s.split()
+    words = s.lower()
 
     # for loop words and add a 1 if a specific word is found again.
-
-    for word in words:
+    # split() the words here now.
+    for word in words.split():
         if word in counting:
             counting[word] += 1
         else:
