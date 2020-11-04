@@ -13,6 +13,11 @@ class HashTableEntry:
 MIN_CAPACITY = 8
 
 
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+
 class HashTable:
     """
     A hash table that with `capacity` buckets
@@ -23,7 +28,8 @@ class HashTable:
 
     def __init__(self, capacity=MIN_CAPACITY):
         self.capacity = capacity
-        self.canister = [None] * capacity
+        self.canister = [LinkedList()] * capacity
+        self.size = 0
 
     def get_num_slots(self):
         """
@@ -36,7 +42,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        return len(self.capacity)
+        return len(self.canister)
 
     def get_load_factor(self):
         """
@@ -45,6 +51,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        return self.size / len(self.canister)
 
     def fnv1(self, key):
         """
@@ -84,7 +91,24 @@ class HashTable:
         """
         # Your code here
         index = self.hash_index(key)
-        self.canister[index] = value
+        # self.canister[index] = value // Only use for MVP Day 1
+
+        # MVP Day 2 Code
+        if self.canister[index].head is None:
+            self.canister[index].head = HashTableEntry(key, value)
+            self.size += 1
+            return
+
+        else:
+            current = self.canister[index].head
+
+            while current.next:
+                if current.key == key:
+                    current.value = value
+                current = current.next
+
+            current.next = HashTableEntry(key, value)
+            self.size += 1
 
     def delete(self, key):
         """
@@ -96,7 +120,20 @@ class HashTable:
         """
         # Your code here
         index = self.hash_index(key)
-        self.canister.pop(index)
+        # self.canister.pop(index) // MVP Day 1 Code
+        current = self.canister[index].head
+
+        if current.key == key:
+            self.canister[index].head = self.canister[index].head.next
+            self.size -= 1
+            return
+        while current.next:
+            previous = current
+            current = current.next
+            if current.key == key:
+                previous.next = current.next
+                self.size -= 1
+                return None
 
     def get(self, key):
         """
@@ -108,7 +145,20 @@ class HashTable:
         """
         # Your code here
         index = self.hash_index(key)
-        return self.canister[index]
+        # return self.canister[index] // MVP Day 1 Code
+
+        current = self.canister[index].head
+
+        if current is None:
+            return None
+        if current.key == key:
+            return current.value
+
+        while current.next:
+            current = current.next
+            if current.key == key:
+                return current.value
+            return None
 
     def resize(self, newcapacity):
         """
@@ -118,6 +168,24 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        self.capacity = newcapacity
+        new_ll = [LinkedList()] * newcapacity
+
+        for x in self.canister:
+            current = x.head
+
+            while current is not None:
+                index = self.hash_index(current.key)
+
+                if new_ll[index].head is None:
+                    new_ll[index].head = HashTableEntry(current.key, current.value)
+                else:
+                    n = HashTableEntry(current.key, current.value)
+                    n.next = new_ll[index].head
+
+                    new_ll[index].head = n
+                current = current.next
+                self.canister = new_ll
 
 
 if __name__ == "__main__":
