@@ -1,7 +1,28 @@
+from collections import Counter
+
+
 def word_count(s):
     # Your code here
+    # do something
+    counting = dict()
+
+    # splits the words that are coming in through 's' parameter.
+    words = s.lower()
+
+    # for loop words and add a 1 if a specific word is found again.
+    # split() the words here now.
+    for word in words.split():
+        if word in counting:
+            counting[word] += 1
+        else:
+            # if the word only appears once then keep at '1'. if not repeat the loop.
+            counting[word] = 1
+
+    # returns counting which is = to dict().
+    return counting
 
 
+# TODO I need to lowercase the output.
 
 if __name__ == "__main__":
     print(word_count(""))
